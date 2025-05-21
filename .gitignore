@@ -1,0 +1,9 @@
+# Ignore dynaconf secret files
+.secrets.*
+__pycache__
+.jj
+.git
+
+# Intelij IDEA based IDEs
+.idea
+
