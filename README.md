@@ -1,6 +1,6 @@
-# 🚀 Modal FastAPI Boilerplate
+# 🚀 Modular FastAPI Boilerplate
 
-**Modal FastAPI Boilerplate** is a repository containing multiple 
+**Modular FastAPI Boilerplate** is a repository containing multiple 
 implementations of a FastAPI-based boilerplate, all built upon a single, unified project structure.
 
 Each implementation is provided via its own Git branch, enabling a better developer experience for both usage and extension.
