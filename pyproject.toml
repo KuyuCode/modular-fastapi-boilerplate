@@ -21,3 +21,24 @@ reportImplicitOverride = false
 reportImportCycles = false
 reportExplicitAny = false
 reportAny = false
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib"
+]
+pythonpath = ["."]
+python_functions = "test_*"
+python_files = "test_*.py"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope="session"
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
+
+[dependency-groups]
+dev = [
+    "async-asgi-testclient>=1.4.11",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.26.0",
+]
+
