@@ -23,6 +23,8 @@ Usage:
 """
 
 import typing
+import collections
+import collections.abc
 from contextlib import asynccontextmanager, contextmanager
 
 __all__ = [
@@ -35,12 +37,12 @@ P = typing.ParamSpec("P")
 
 
 def async_manager(
-    func: typing.Callable[P, typing.AsyncGenerator[T]],
+    func: typing.Callable[P, collections.abc.AsyncGenerator[T]],
 ) -> typing.Callable[P, typing.AsyncContextManager[T]]:
     return asynccontextmanager(func)
 
 
 def sync_manager(
-    func: typing.Callable[P, typing.Generator[T, None, None]],
+    func: typing.Callable[P, collections.abc.Generator[T, None, None]],
 ) -> typing.Callable[P, typing.ContextManager[T]]:
     return contextmanager(func)
