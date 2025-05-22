@@ -3,6 +3,7 @@ from typing import Callable
 from . import schema, error, util
 from fastapi import APIRouter, FastAPI
 from .route import router as root_router
+from .session_holder import session_holder
 from contextlib import AbstractAsyncContextManager
 from .error_handlers import default_handler, error_handler, validation_error_handler
 
@@ -17,9 +18,13 @@ def create_lifespan(
         if test_mode:
             pass
         else:
+            session_holder.init(util.settings.sqalchemy.url)  # type: ignore
             util.fastapi.setup_route_errors(app)
 
         yield
+
+        if not test_mode:
+            await session_holder.close()
 
     return util.contextmanager.async_manager(lifespan)
 

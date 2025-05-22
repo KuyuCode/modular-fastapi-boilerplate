@@ -8,6 +8,7 @@ dependencies = [
     "dynaconf>=3.2.11",
     "fastapi[standard]>=0.115.12",
     "pydantic>=2.11.4",
+    "sqlalchemy>=2.0.41",
 ]
 
 

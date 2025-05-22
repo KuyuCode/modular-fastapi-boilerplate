@@ -22,6 +22,7 @@ project root
 │  ├─ protocols.py       # Typing and Pydantic protocols
 │  ├─ route/             # API route definitions
 │  ├─ schema/            # Request and response schemas
+│  ├─ models/            # SQLAlchemy models 
 │  └─ util/              # Common utilities
 ├─ app_api.py            # Entry point for production
 ├─ .secrets.yaml         # Secrets: tokens, DB URLs, encryption keys, etc.
