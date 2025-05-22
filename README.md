@@ -24,6 +24,7 @@ project root
 │  ├─ schema/            # Request and response schemas
 │  └─ util/              # Common utilities
 ├─ app_api.py            # Entry point for production
+├─ api_tests/            # API tests
 ├─ .secrets.yaml         # Secrets: tokens, DB URLs, encryption keys, etc.
 └─ settings.yaml         # Application configuration
 ```
