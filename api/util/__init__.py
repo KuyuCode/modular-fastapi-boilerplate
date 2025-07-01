@@ -1,5 +1,6 @@
 import math
 import typing
+import collections.abc
 
 from .. import constants
 from dynaconf import Dynaconf
@@ -28,7 +29,7 @@ def get_offset_and_limit(page: int, size: int = constants.misc.DEFAULT_PAGE_SIZE
 
 
 def paginated_response(
-    items: typing.Sequence[typing.Any],
+    items: collections.abc.Sequence[typing.Any],
     total: int,
     offset: int,
     limit: int,
