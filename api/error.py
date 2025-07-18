@@ -1,7 +1,9 @@
+import typing
 import fastapi
 from typing import cast
 from . import util, protocols
 from pydantic.fields import Field
+from collections.abc import Mapping
 from .schema import Schema, ErrorModel
 
 
@@ -31,7 +33,7 @@ class APIError(fastapi.HTTPException):
         if model_name in self.models:
             return self.models[model_name]
 
-        origin_fields = cast(dict, ErrorModel.model_fields)
+        origin_fields = ErrorModel.model_fields
 
         message_description = origin_fields["message"].description
         category_description = origin_fields["category"].description
@@ -71,17 +73,17 @@ class APIError(fastapi.HTTPException):
         code: str,
         message: str,
         status_code: int,
-        headers: dict[str, str] | None = None,
-        extra: dict[str, str] | None = None,
+        headers: Mapping[str, str] | None = None,
+        extra: Mapping[str, typing.Any] | None = None,
     ):
-        self.code = code
-        self.extra = extra
-        self.headers = headers
-        self.message = message
-        self.category = category
-        self.status_code = status_code
+        self.code: str = code
+        self.extra: Mapping[str, typing.Any] | None = extra
+        self.headers: Mapping[str, str] | None = headers
+        self.message: str = message
+        self.category: str = category
+        self.status_code: int = status_code
 
-        self.formatted_message = self.message
+        self.formatted_message: str = self.message
         if self.extra is not None:
             self.formatted_message = self.message.format(**self.extra)
 
@@ -91,9 +93,18 @@ class APIError(fastapi.HTTPException):
     def __str__(self):
         return f"{self.category}+{self.code}: {self.formatted_message}"
 
-    def __call__(self, extra: dict[str, str] | None = None, headers: dict[str, str] | None = None):
+    def __call__(
+        self,
+        extra: Mapping[str, typing.Any] | None = None,
+        headers: Mapping[str, str] | None = None,
+    ):
         return APIError(
-            self.category, self.code, self.message, self.status_code, headers or self.headers, extra
+            self.category,
+            self.code,
+            self.message,
+            self.status_code,
+            headers or self.headers,
+            extra,
         )
 
     @property

@@ -25,7 +25,13 @@ Usage:
 import typing
 import collections
 import collections.abc
-from contextlib import asynccontextmanager, contextmanager
+
+from contextlib import (
+    contextmanager,
+    asynccontextmanager,
+    AbstractContextManager,
+    AbstractAsyncContextManager,
+)
 
 __all__ = [
     "sync_manager",
@@ -38,11 +44,11 @@ P = typing.ParamSpec("P")
 
 def async_manager(
     func: typing.Callable[P, collections.abc.AsyncGenerator[T]],
-) -> typing.Callable[P, typing.AsyncContextManager[T]]:
+) -> typing.Callable[P, AbstractAsyncContextManager[T]]:
     return asynccontextmanager(func)
 
 
 def sync_manager(
     func: typing.Callable[P, collections.abc.Generator[T, None, None]],
-) -> typing.Callable[P, typing.ContextManager[T]]:
+) -> typing.Callable[P, AbstractContextManager[T]]:
     return contextmanager(func)

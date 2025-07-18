@@ -1,19 +1,23 @@
 import typing
 from fastapi import FastAPI
-from types import FunctionType, UnionType
 from collections.abc import Callable
 from fastapi.routing import APIRoute
-from fastapi.utils import create_model_field
+from types import FunctionType, UnionType
+from fastapi.utils import create_model_field  # type: ignore
 from fastapi.dependencies.models import Dependant
 
 if typing.TYPE_CHECKING:
     from ..error import APIError
     from ..schema import ErrorModel
 
+T_f = typing.TypeVar("T_f", bound=FunctionType)
+
 __all__ = ["api_errors", "setup_route_errors"]
 
 
-def dependant_has_dependency(dependant: Dependant, call: FunctionType | Callable) -> bool:
+def dependant_has_dependency(
+    dependant: Dependant, call: Callable[..., typing.Any]
+) -> bool:
     for dependency in dependant.dependencies:
         if dependency.call is call:
             return True
@@ -24,15 +28,17 @@ def dependant_has_dependency(dependant: Dependant, call: FunctionType | Callable
     return False
 
 
-def route_has_dependency(route: APIRoute, call: FunctionType | Callable) -> bool:
+def route_has_dependency(
+    route: APIRoute, call: FunctionType | Callable[..., typing.Any]
+) -> bool:
     return dependant_has_dependency(route.dependant, call)
 
 
-dependency_errors: dict[Callable, tuple["APIError", ...]] = {}
+dependency_errors: dict[Callable[..., typing.Any], tuple["APIError", ...]] = {}
 
 
-def api_errors(*errors: "APIError"):
-    def decorator(func):
+def api_errors(*errors: "APIError") -> Callable[[T_f], T_f]:
+    def decorator(func: T_f) -> T_f:
         if func in dependency_errors:
             dependency_errors[func] = dependency_errors[func] + errors
         else:
@@ -42,7 +48,9 @@ def api_errors(*errors: "APIError"):
     return decorator
 
 
-def errors_to_models(errors: tuple["APIError", ...]) -> dict[int, "type[ErrorModel] | UnionType"]:
+def errors_to_models(
+    errors: tuple["APIError", ...],
+) -> dict[int, "type[ErrorModel] | UnionType"]:
     """Combine errors by status code and return their models"""
     result: dict[int, type[ErrorModel] | UnionType] = {}
 

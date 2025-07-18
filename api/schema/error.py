@@ -1,5 +1,6 @@
-from pydantic import HttpUrl
-from .model import Schema, Field
+from pydantic import HttpUrl, Field
+
+from .model import Schema
 
 
 __all__ = ["ValidationErrorModel", "ErrorModel"]

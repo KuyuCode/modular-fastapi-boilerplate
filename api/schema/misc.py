@@ -1,5 +1,8 @@
 import typing
-from .model import Schema, Field
+
+from pydantic import Field
+
+from .model import Schema
 
 
 __all__ = ["Paginated"]
@@ -22,6 +25,7 @@ class Paginated(typing.Generic[T_s]):
 
         @router.method("path", response_model=Paginated[ItemModel])
     """
+
     __models__: dict[str, type[Schema]] = {}
 
     pagination: PaginationData
@@ -39,7 +43,9 @@ class Paginated(typing.Generic[T_s]):
                 model_name,
                 (Schema,),
                 dict(
-                    __annotations__=dict(pagination=PaginationData, items=list[item_model]),
+                    __annotations__=dict(
+                        pagination=PaginationData, items=list[item_model]
+                    ),
                     pagination=Field(description="Information about the pagination"),
                     items=Field(description="List of items"),
                 ),
@@ -49,4 +55,3 @@ class Paginated(typing.Generic[T_s]):
         cls.__models__[model_name] = model
 
         return model
-

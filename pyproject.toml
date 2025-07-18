@@ -9,3 +9,15 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "pydantic>=2.11.4",
 ]
+
+
+[tool.pyright]
+reportUnannotatedClassAttribute = false
+reportIgnoreCommentWithoutRule = false
+enableTypeIgnoreComments = true
+reportUnusedCallResult = false
+reportMissingSuperCall = false
+reportImplicitOverride = false
+reportImportCycles = false
+reportExplicitAny = false
+reportAny = false

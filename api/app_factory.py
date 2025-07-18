@@ -1,12 +1,15 @@
 import fastapi
+from typing import Callable
 from . import schema, error, util
 from fastapi import APIRouter, FastAPI
 from .route import router as root_router
-from typing import Callable, AsyncContextManager
+from contextlib import AbstractAsyncContextManager
 from .error_handlers import default_handler, error_handler, validation_error_handler
 
 
-def create_lifespan(test_mode: bool = True) -> Callable[[FastAPI], AsyncContextManager[None]]:
+def create_lifespan(
+    test_mode: bool = True,
+) -> Callable[[FastAPI], AbstractAsyncContextManager[None]]:
     async def lifespan(app: fastapi.FastAPI):
         # Do something to optimize tests run
         # Note: test mode is not development mode. Test mode only used for pytest to run.
@@ -52,6 +55,8 @@ async def root():
     )
 
 
-@root_router.get("/errors", summary="List all defined errors", operation_id="list_errors")
+@root_router.get(
+    "/errors", summary="List all defined errors", operation_id="list_errors"
+)
 async def errors() -> dict[str, dict[str, tuple[str, int]]]:
     return error.errors
