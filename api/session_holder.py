@@ -1,4 +1,4 @@
-import typing
+from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -16,7 +16,7 @@ __all__ = ["session_holder"]
 
 class SessionHolder:
     def __init__(self):
-        self._session_maker: async_sessionmaker | None = None
+        self._session_maker: async_sessionmaker[AsyncSession] | None = None
         self._engine: AsyncEngine | None = None
         self._url: str | None = None
 
@@ -40,7 +40,7 @@ class SessionHolder:
 
     @property
     def connect(self):
-        async def inner() -> typing.AsyncGenerator[AsyncConnection]:
+        async def inner() -> AsyncGenerator[AsyncConnection]:
             if self._engine is None:
                 raise RuntimeError("SessionHolder is not initialized")
 
@@ -55,7 +55,7 @@ class SessionHolder:
 
     @property
     def session(self):
-        async def inner() -> typing.AsyncGenerator[AsyncSession]:
+        async def inner() -> AsyncGenerator[AsyncSession]:
             if self._session_maker is None:
                 raise RuntimeError("SessionHolder is not initialized")
 
