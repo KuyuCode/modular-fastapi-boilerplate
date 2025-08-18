@@ -18,7 +18,7 @@ def create_lifespan(
         if test_mode:
             pass
         else:
-            session_holder.init(util.settings.sqalchemy.url)  # type: ignore
+            session_holder.init(util.settings.sqlalchemy.url)  # type: ignore
             util.fastapi.setup_route_errors(app)
 
         yield
