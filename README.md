@@ -27,6 +27,7 @@ project root
 │  └─ util/              # Common utilities
 ├─ app_api.py            # Entry point for production
 ├─ api_alembic.ini       # API alembic configuration
+├─ api_tests/            # API tests
 ├─ .secrets.yaml         # Secrets: tokens, DB URLs, encryption keys, etc.
 └─ settings.yaml         # Application configuration
 ```
