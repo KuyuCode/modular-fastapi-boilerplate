@@ -1,4 +1,5 @@
-from collections.abc import AsyncGenerator
+from contextlib import AbstractAsyncContextManager
+from collections.abc import AsyncGenerator, Callable
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -11,38 +12,32 @@ from sqlalchemy.ext.asyncio import (
 from api import util
 
 
-__all__ = ["session_holder"]
+__all__ = ["SessionHolder"]
 
 
 class SessionHolder:
-    def __init__(self):
-        self._session_maker: async_sessionmaker[AsyncSession] | None = None
-        self._engine: AsyncEngine | None = None
-        self._url: str | None = None
-
-    def init(self, url: str):
-        self._url = url
-        self._engine = create_async_engine(url, echo=False)
-        self._session_maker = async_sessionmaker(
+    def __init__(self, url: str):
+        self._url: str = url
+        self._engine: AsyncEngine = create_async_engine(url, echo=False)
+        self._session_maker: async_sessionmaker[AsyncSession] = async_sessionmaker(
             autocommit=False,
             expire_on_commit=False,
             bind=self._engine,
         )
+        self._closed: bool = False
 
     async def close(self):
-        if self._engine is None:
-            raise RuntimeError("SessionHolder is not initialized")
+        if self._closed:
+            raise RuntimeError("SessionHolder closed")
 
         await self._engine.dispose()
-
-        self._session_maker = None
-        self._engine = None
+        self._closed = True
 
     @property
-    def connect(self):
+    def connect(self) -> Callable[[], AbstractAsyncContextManager[AsyncConnection]]:
         async def inner() -> AsyncGenerator[AsyncConnection]:
-            if self._engine is None:
-                raise RuntimeError("SessionHolder is not initialized")
+            if self._closed is None:
+                raise RuntimeError("SessionHolder is closed")
 
             async with self._engine.begin() as connection:
                 try:
@@ -54,10 +49,10 @@ class SessionHolder:
         return util.contextmanager.async_manager(inner)
 
     @property
-    def session(self):
+    def session(self) -> Callable[[], AbstractAsyncContextManager[AsyncSession]]:
         async def inner() -> AsyncGenerator[AsyncSession]:
             if self._session_maker is None:
-                raise RuntimeError("SessionHolder is not initialized")
+                raise RuntimeError("SessionHolder is closed")
 
             session = self._session_maker()
 
@@ -70,6 +65,3 @@ class SessionHolder:
                 await session.close()
 
         return util.contextmanager.async_manager(inner)
-
-
-session_holder = SessionHolder()

@@ -3,7 +3,7 @@ from typing import Callable
 from . import schema, error, util
 from fastapi import APIRouter, FastAPI
 from .route import router as root_router
-from .session_holder import session_holder
+from .session_holder import SessionHolder
 from contextlib import AbstractAsyncContextManager
 from .error_handlers import default_handler, error_handler, validation_error_handler
 
@@ -18,7 +18,9 @@ def create_lifespan(
         if test_mode:
             pass
         else:
-            session_holder.init(util.settings.sqlalchemy.url)  # type: ignore
+            session_holder = SessionHolder(util.settings.sqlalchemy.url)
+            app.state.session_holder = session_holder
+
             util.fastapi.setup_route_errors(app)
 
         yield
@@ -34,8 +36,8 @@ def make_app(test_mode: bool = False) -> fastapi.FastAPI:
         lifespan=create_lifespan(test_mode=test_mode),
         redoc_url=None,
         responses={422: dict(model=schema.ValidationErrorModel)},
-        title=util.settings.app.title,  # type: ignore
-        version=util.settings.app.version,  # type: ignore
+        title=util.settings.app.title,
+        version=util.settings.app.version,
     )
 
     router: APIRouter = getattr(app, "router")
