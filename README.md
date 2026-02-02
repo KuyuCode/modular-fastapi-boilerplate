@@ -23,8 +23,10 @@ project root
 │  ├─ route/             # API route definitions
 │  ├─ schema/            # Request and response schemas
 │  ├─ models/            # SQLAlchemy models 
+│  ├─ alembic/           # Alembic environment and revisions(versions)
 │  └─ util/              # Common utilities
 ├─ app_api.py            # Entry point for production
+├─ api_alembic.ini       # API alembic configuration
 ├─ .secrets.yaml         # Secrets: tokens, DB URLs, encryption keys, etc.
 └─ settings.yaml         # Application configuration
 ```
